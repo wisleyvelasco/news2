@@ -751,10 +751,10 @@
                 <select id="consciousness" name="consciousness" required>
                   <option value="">Selecione</option>
                   <option value="ALERTA">Alerta</option>
-                  <option value="NOVA_CONFUSAO">Nova confusão</option>
-                  <option value="VOZ">Responde à voz</option>
-                  <option value="DOR">Responde à dor</option>
-                  <option value="INCONSCIENTE">Inconsciente</option>
+                  <option value="RESPONDE_ESTIMULO_VERBAL">Responde Estímulo Verbal</option>
+                  <option value="RESPONDE_ESTIMULO_DOR">Responde Estímulo de Dor</option>
+                  <option value="NAO_RESPONSIVO">Não Responsivo</option>
+                  <option value="CONFUSO">Confuso</option>
                 </select>
                 <span class="error-message"></span>
               </div>
@@ -771,7 +771,7 @@
             <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
             <div class="btn-group">
               <button type="button" class="btn-secondary" id="clearBtn">Limpar tela</button>
-              <button type="submit" class="btn-primary">Salvar registro</button>
+              <button type="submit" class="btn-primary" id="submitBtn">Salvar registro</button>
             </div>
           </div>
         </section>
@@ -880,9 +880,10 @@
 
   <script>
     const TZ_BRASILIA = "America/Sao_Paulo";
-    const STORAGE_KEY = "hdt_news2_triage_records_v2";
+    const STORAGE_KEY = "hdt_news2_triage_records_v3";
 
     // Próxima etapa: publicar um Apps Script como Web App e colar a URL abaixo.
+    // No Apps Script, a gravação deve usar LockService + appendRow para serializar escritas simultâneas.
     // Exemplo: const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/XXXX/exec";
     const GOOGLE_SCRIPT_URL = "";
 
@@ -893,11 +894,13 @@
     const ageBox = document.getElementById("ageBox");
     const clearBtn = document.getElementById("clearBtn");
     const feedback = document.getElementById("feedback");
+    const submitBtn = document.getElementById("submitBtn");
     const clockBrasilia = document.getElementById("clockBrasilia");
     const historyBox = document.getElementById("historyBox");
     const historyCount = document.getElementById("historyCount");
     const spo2Normal = document.getElementById("spo2Normal");
     const spo2Co2 = document.getElementById("spo2Co2");
+    let isSaving = false;
 
     document.addEventListener("DOMContentLoaded", () => {
       updateClock();
@@ -968,6 +971,8 @@
 
     form.addEventListener("submit", async event => {
       event.preventDefault();
+      if (isSaving) return;
+
       hideFeedback();
       clearAllErrors();
       refreshAllClinicalAttention();
@@ -979,6 +984,9 @@
         return;
       }
 
+      isSaving = true;
+      setSavingState(true);
+
       try {
         await saveRecord(validation.payload);
         resetScreen({ keepFeedback: true });
@@ -986,8 +994,16 @@
       } catch (error) {
         console.error(error);
         showFeedback("Não foi possível salvar o registro. Verifique a conexão ou o endpoint configurado.", "error");
+      } finally {
+        isSaving = false;
+        setSavingState(false);
       }
     });
+
+    function setSavingState(active) {
+      submitBtn.disabled = active;
+      submitBtn.textContent = active ? "Salvando..." : "Salvar registro";
+    }
 
     function normalizeText(value) {
       return String(value || "")
@@ -1178,7 +1194,9 @@
       const age = calculateAge(parsedBirthDate.date);
 
       const payload = {
+        record_id: generateRecordId(),
         recorded_at_brasilia: getBrasiliaTimestamp(),
+        client_submitted_at_utc: new Date().toISOString(),
         patient_name: normalizedPatient,
         mother_name: normalizedMother,
         birth_date: birthDate.value,
@@ -1200,6 +1218,13 @@
       };
 
       return { ok: true, payload };
+    }
+
+    function generateRecordId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
+      return `hdt-news2-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     }
 
     function validateNumber(id, min, max, message) {
