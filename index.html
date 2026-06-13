@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HDT | Ficha de Monitoramento Clínico - NEWS2</title>
+  <style>
+    :root {
+      --primary: #1f70b7;
+      --primary-dark: #0f4f86;
+      --primary-soft: #e8f3ff;
+      --accent-green: #28a745;
+      --accent-green-dark: #13793a;
+      --ink: #182230;
+      --muted: #667085;
+      --line: #d5deea;
+      --surface: #ffffff;
+      --background: #f3f7fb;
+      --danger: #b42318;
+      --danger-soft: #fff1f0;
+      --warning: #b54708;
+      --warning-soft: #fff7ed;
+      --ok: #087443;
+      --ok-soft: #ecfdf3;
+      --clinical-blue: #dff0ff;
+      --clinical-blue-strong: #79b7ea;
+      --yellow-code: #fff300;
+      --code-blue: #65a8dd;
+      --shadow: 0 18px 42px rgba(15, 23, 42, .10);
+      --radius: 18px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(31,112,183,.18), transparent 34rem),
+        radial-gradient(circle at 88% 12%, rgba(40,167,69,.14), transparent 28rem),
+        linear-gradient(180deg, #ffffff 0%, var(--background) 44%, #edf4f8 100%);
+    }
+
+    .page {
+      width: min(1360px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 86px;
+      min-width: 86px;
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(31,112,183,.16);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+    }
+
+    .brand-mark img { display: block; width: 100%; height: auto; }
+
+    .brand-title small {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary-dark);
+      font-size: .78rem;
+      font-weight: 850;
+      letter-spacing: .075em;
+      text-transform: uppercase;
+    }
+
+    .brand-title h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.25vw, 2.05rem);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+    }
+
+    .brand-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .status-pill {
+      border: 1px solid rgba(31,112,183,.18);
+      background: rgba(255,255,255,.78);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--primary-dark);
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+    }
+
+    .hero {
+      margin-bottom: 18px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(15,79,134,.98), rgba(31,112,183,.92)),
+        radial-gradient(circle at right bottom, rgba(255,255,255,.20), transparent 20rem);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -130px;
+      bottom: -165px;
+      width: 350px;
+      height: 350px;
+      border-radius: 999px;
+      border: 56px solid rgba(255,255,255,.09);
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 96ch; }
+
+    .hero h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.2rem, 2.2vw, 1.92rem);
+      letter-spacing: -.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,.90);
+      line-height: 1.55;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+      position: sticky;
+      top: 12px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(213,222,234,.95);
+      border-radius: var(--radius);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, .075);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fbfe);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: -.012em;
+    }
+
+    .card-header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .87rem;
+      line-height: 1.4;
+    }
+
+    .card-body { padding: 18px; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
+      color: var(--primary-dark);
+      font-size: .8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--accent-green);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-size: .72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      white-space: nowrap;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .span-2 { grid-column: span 2; }
+    .span-3 { grid-column: span 3; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+      border-radius: 15px;
+      transition: background .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .field.clinical-attention {
+      padding: 10px;
+      margin: -10px;
+      background: var(--clinical-blue);
+      border: 1px solid var(--clinical-blue-strong);
+      box-shadow: 0 0 0 4px rgba(121,183,234,.18);
+    }
+
+    .field.clinical-attention label::after {
+      content: "  · Atenção clínica";
+      color: var(--primary-dark);
+      font-size: .75rem;
+      font-weight: 900;
+    }
+
+    label {
+      color: #344054;
+      font-size: .88rem;
+      font-weight: 850;
+    }
+
+    .required::after { content: " *"; color: var(--danger); }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #c8d3df;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    textarea { min-height: 84px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(31,112,183,.14);
+    }
+
+    input[disabled], select[disabled] {
+      color: #98a2b3;
+      background: #f2f5f8;
+      cursor: not-allowed;
+    }
+
+    .uppercase { text-transform: uppercase; }
+
+    .hint {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.35;
+    }
+
+    .error-message {
+      display: none;
+      color: var(--danger);
+      font-size: .78rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .field.invalid input,
+    .field.invalid select,
+    .field.invalid textarea {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .field.invalid .error-message { display: block; }
+
+    .age-box {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      border-radius: 12px;
+      border: 1px dashed rgba(31,112,183,.38);
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      padding: 10px 12px;
+      font-weight: 900;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 8px;
+      padding: 6px;
+      border-radius: 15px;
+      background: #edf4fb;
+      border: 1px solid #d8e6f3;
+    }
+
+    .segmented input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .segmented label {
+      min-height: 39px;
+      display: grid;
+      place-items: center;
+      padding: 8px 10px;
+      border-radius: 11px;
+      color: #475467;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .16s ease;
+    }
+
+    .segmented input:checked + label {
+      color: var(--primary-dark);
+      background: #fff;
+      box-shadow: 0 9px 18px rgba(15, 23, 42, .08);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+      background: #fbfdff;
+    }
+
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 13px;
+      padding: 10px 16px;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .08s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--accent-green-dark);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(19,121,58,.24);
+    }
+    .btn-primary:hover { background: #0b6730; }
+
+    .btn-secondary { background: #e8eef5; color: #344054; }
+    .btn-secondary:hover { background: #dfe8f0; }
+
+    .feedback {
+      display: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { background: var(--ok-soft); color: var(--ok); border: 1px solid rgba(8,116,67,.22); }
+    .feedback.error { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(180,35,24,.22); }
+    .feedback.warn { background: var(--warning-soft); color: var(--warning); border: 1px solid rgba(181,71,8,.22); }
+
+    .score-card {
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .score-number,
+    .score-classification {
+      border-radius: 16px;
+      border: 1px solid #d5e3ef;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .score-number span,
+    .score-classification span {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .score-number strong {
+      display: block;
+      color: var(--primary-dark);
+      font-size: 2.7rem;
+      line-height: 1;
+      letter-spacing: -.06em;
+    }
+
+    .score-classification strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .score-note {
+      margin: 14px 0 0;
+      padding: 12px 14px;
+      border-left: 4px solid var(--primary);
+      background: var(--primary-soft);
+      color: #18415f;
+      border-radius: 12px;
+      line-height: 1.45;
+      font-size: .9rem;
+    }
+
+    .legend-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+
+    .legend-table th,
+    .legend-table td {
+      border: 1px solid #2c64c8;
+      padding: 7px 6px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 1.25;
+    }
+
+    .legend-table thead th {
+      background: var(--primary);
+      color: #fff;
+      font-size: .75rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .legend-table .yellow td,
+    .legend-table .yellow th { background: var(--yellow-code); color: #111827; font-weight: 850; }
+
+    .legend-table .blue td,
+    .legend-table .blue th { background: var(--code-blue); color: #0b2033; font-weight: 850; }
+
+    .legend-table .left { text-align: left; }
+
+    .history {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .87rem;
+    }
+
+    .history th,
+    .history td {
+      border-bottom: 1px solid #e5eaf0;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .history th {
+      color: #475467;
+      background: #f8fafc;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .history-empty { margin: 0; color: var(--muted); line-height: 1.45; }
+
+    .storage-warning {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(181,71,8,.22);
+      background: var(--warning-soft);
+      color: var(--warning);
+      font-size: .82rem;
+      line-height: 1.4;
+      font-weight: 750;
+    }
+
+    @media (max-width: 1120px) {
+      .workspace { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .status-pill { white-space: normal; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .span-2, .span-3 { grid-column: auto; }
+      .score-grid { grid-template-columns: 1fr; }
+      .segmented { grid-template-columns: 1fr; }
+      .actions { align-items: stretch; }
+      .btn-group, .btn-group button { width: 100%; }
+      .legend-table { font-size: .76rem; }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(100% - 18px, 1360px); padding-top: 12px; }
+      .hero { padding: 18px; border-radius: 18px; }
+      .brand { align-items: flex-start; }
+      .brand-mark { width: 72px; min-width: 72px; min-height: 50px; }
+      .legend-table th, .legend-table td { padding: 6px 4px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar" aria-label="Cabeçalho institucional">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <img src="https://isgsaude.org.br/hdt/wp-content/uploads/sites/2/2021/04/logo-hdt.jpg" alt="" onerror="this.style.display='none'" />
+        </div>
+        <div class="brand-title">
+          <small>Hospital Estadual de Doenças Tropicais Dr. Anuar Auad</small>
+          <h1>Ficha de Monitoramento Clínico - NEWS2</h1>
+          <p>Sistema de Triagem | Protótipo front-end v2</p>
+        </div>
+      </div>
+      <div class="status-pill" id="clockBrasilia">Horário de Brasília: --:--:--</div>
+    </header>
+
+    <section class="hero" aria-label="Resumo da aplicação">
+      <div class="hero-content">
+        <h2>Formulário institucional para registro seguro da triagem clínica.</h2>
+        <p>Esta versão preserva a lógica visual da ficha original, mas impede a edição direta de células, valida os campos antes do envio, sinaliza achados respiratórios em azul e prepara a estrutura para posterior cálculo do NEWS2 e gravação em Google Planilhas.</p>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <form id="news2Form" novalidate>
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3>Identificação do Paciente</h3>
+              <p>Campos obrigatórios com limpeza e padronização automática antes da gravação.</p>
+            </div>
+            <span class="tag">Paciente</span>
+          </div>
+          <div class="card-body grid-2">
+            <div class="field span-2" data-field="patientName">
+              <label for="patientName" class="required">Nome do Paciente</label>
+              <input id="patientName" name="patientName" class="uppercase" type="text" autocomplete="off" placeholder="Digite o nome completo" required />
+              <span class="hint">Será gravado em CAIXA ALTA, sem espaços excedentes.</span>
+              <span class="error-message"></span>
+            </div>
+
+            <div class="field span-2" data-field="motherName">
+              <label for="motherName" class="required">Nome da Mãe</label>
+              <input id="motherName" name="motherName" class="uppercase" type="text" autocomplete="off" placeholder="Digite o nome completo da mãe" required />
+              <span class="hint">Também será padronizado antes do envio.</span>
+              <span class="error-message"></span>
+            </div>
+
+            <div class="field" data-field="birthDate">
+              <label for="birthDate" class="required">Data de Nascimento</label>
+              <input id="birthDate" name="birthDate" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="dd/mm/aaaa" required />
+              <span class="hint">Digite somente números. A máscara será aplicada automaticamente.</span>
+              <span class="error-message"></span>
+            </div>
+
+            <div class="field">
+              <label>Idade Atual</label>
+              <div class="age-box" id="ageBox" aria-live="polite">Informe a data de nascimento</div>
+              <span class="hint">Cálculo com referência no horário de Brasília.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3>Condição Respiratória Inicial</h3>
+              <p>Registro clínico complementar. Ao marcar “Sim”, o campo é sombreado em azul.</p>
+            </div>
+            <span class="tag">Apoio clínico</span>
+          </div>
+          <div class="card-body grid-3">
+            <div class="field" data-field="dyspnea">
+              <label for="dyspnea" class="required">Dispneia</label>
+              <select id="dyspnea" name="dyspnea" required data-blue-when-sim>
+                <option value="">Selecione</option>
+                <option value="NAO">Não</option>
+                <option value="SIM">Sim</option>
+              </select>
+              <span class="error-message"></span>
+            </div>
+
+            <div class="field" data-field="brokenSpeech">
+              <label for="brokenSpeech" class="required">Frases Entrecortadas</label>
+              <select id="brokenSpeech" name="brokenSpeech" required data-blue-when-sim>
+                <option value="">Selecione</option>
+                <option value="NAO">Não</option>
+                <option value="SIM">Sim</option>
+              </select>
+              <span class="error-message"></span>
+            </div>
+
+            <div class="field" data-field="respEffort">
+              <label for="respEffort" class="required">Sinais de Esforço Respiratório</label>
+              <select id="respEffort" name="respEffort" required data-blue-when-sim>
+                <option value="">Selecione</option>
+                <option value="NAO">Não</option>
+                <option value="SIM">Sim</option>
+              </select>
+              <span class="error-message"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3>Sinais Vitais</h3>
+              <p>Todos os campos abaixo são obrigatórios, exceto a escala de saturação que não estiver ativa.</p>
+            </div>
+            <span class="tag">NEWS2</span>
+          </div>
+          <div class="card-body">
+            <p class="section-title">Parâmetros clínicos</p>
+            <div class="grid-3">
+              <div class="field" data-field="sbp">
+                <label for="sbp" class="required">PAS</label>
+                <input id="sbp" name="sbp" type="text" inputmode="numeric" autocomplete="off" placeholder="mmHg" required />
+                <span class="hint">Faixa operacional: 50 a 260 mmHg.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="respRate">
+                <label for="respRate" class="required">FR</label>
+                <input id="respRate" name="respRate" type="text" inputmode="numeric" autocomplete="off" placeholder="irpm" required />
+                <span class="hint">Faixa operacional: 4 a 80 irpm.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="heartRate">
+                <label for="heartRate" class="required">FC</label>
+                <input id="heartRate" name="heartRate" type="text" inputmode="numeric" autocomplete="off" placeholder="bpm" required />
+                <span class="hint">Faixa operacional: 20 a 240 bpm.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field span-3" data-field="spo2Scale">
+                <label class="required">Perfil de Saturação</label>
+                <div class="segmented" role="radiogroup" aria-label="Perfil de saturação">
+                  <input type="radio" id="scale1" name="spo2Scale" value="SADIO" checked />
+                  <label for="scale1">Sat O₂ - sem retenção de CO₂</label>
+                  <input type="radio" id="scale2" name="spo2Scale" value="RETENTOR_CO2" />
+                  <label for="scale2">Sat O₂ - retentor de CO₂</label>
+                </div>
+                <span class="hint">Apenas uma escala fica ativa por atendimento.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="spo2Normal">
+                <label for="spo2Normal" class="required">Sat O₂ (Sadio)</label>
+                <input id="spo2Normal" name="spo2Normal" type="text" inputmode="numeric" autocomplete="off" placeholder="%" />
+                <span class="hint">Faixa operacional: 50% a 100%.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="spo2Co2">
+                <label for="spo2Co2">Sat O₂ (Retentor CO₂)</label>
+                <input id="spo2Co2" name="spo2Co2" type="text" inputmode="numeric" autocomplete="off" placeholder="%" disabled />
+                <span class="hint">Preencher somente quando o perfil retentor estiver selecionado.</span>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="oxygenSupport">
+                <label for="oxygenSupport" class="required">Suporte de O₂</label>
+                <select id="oxygenSupport" name="oxygenSupport" required>
+                  <option value="">Selecione</option>
+                  <option value="AR_AMBIENTE">Ar ambiente</option>
+                  <option value="SUPLEMENTAR">Oxigênio suplementar / suporte</option>
+                </select>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="consciousness">
+                <label for="consciousness" class="required">Nível de Consciência</label>
+                <select id="consciousness" name="consciousness" required>
+                  <option value="">Selecione</option>
+                  <option value="ALERTA">Alerta</option>
+                  <option value="NOVA_CONFUSAO">Nova confusão</option>
+                  <option value="VOZ">Responde à voz</option>
+                  <option value="DOR">Responde à dor</option>
+                  <option value="INCONSCIENTE">Inconsciente</option>
+                </select>
+                <span class="error-message"></span>
+              </div>
+
+              <div class="field" data-field="temperature">
+                <label for="temperature" class="required">Temperatura</label>
+                <input id="temperature" name="temperature" type="text" inputmode="decimal" autocomplete="off" placeholder="°C" required />
+                <span class="hint">Aceita vírgula ou ponto. Faixa operacional: 30,0°C a 45,0°C.</span>
+                <span class="error-message"></span>
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+            <div class="btn-group">
+              <button type="button" class="btn-secondary" id="clearBtn">Limpar tela</button>
+              <button type="submit" class="btn-primary">Salvar registro</button>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <aside class="sidebar" aria-label="Painel de apoio NEWS2">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3>Score e Classificação</h3>
+              <p>Reservado para a próxima etapa de cálculo automático.</p>
+            </div>
+            <span class="tag">Score</span>
+          </div>
+          <div class="score-card">
+            <div class="score-grid">
+              <div class="score-number">
+                <span>Score</span>
+                <strong id="scorePreview">--</strong>
+              </div>
+              <div class="score-classification">
+                <span>Classificação</span>
+                <strong id="classificationPreview">Cálculo pendente</strong>
+              </div>
+            </div>
+            <p class="score-note">▸ Reavaliar SSVV e aplicação da escala de NEWS conforme rotina estabelecida. O cálculo será acoplado após validação da tela de entrada.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3>Legenda NEWS2</h3>
+              <p>Referência operacional visível ao lado do formulário.</p>
+            </div>
+            <span class="tag">Legenda</span>
+          </div>
+          <div class="card-body">
+            <table class="legend-table" aria-label="Legenda de classificação NEWS2">
+              <thead>
+                <tr>
+                  <th>Score</th>
+                  <th>Classificação</th>
+                  <th>Ação</th>
+                  <th>Controles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0</td>
+                  <td>Sem risco</td>
+                  <td>Não se aplica</td>
+                  <td>Rotina</td>
+                </tr>
+                <tr>
+                  <td>1 a 4</td>
+                  <td>Baixo risco</td>
+                  <td>Não se aplica</td>
+                  <td>4/4h</td>
+                </tr>
+                <tr class="yellow">
+                  <td>3 em um único parâmetro</td>
+                  <td>Médio risco<br><strong>(Código amarelo)</strong></td>
+                  <td>Posso descartar infecção?<br><strong>Não</strong></td>
+                  <td>1/1h</td>
+                </tr>
+                <tr class="yellow">
+                  <td>≥ 5</td>
+                  <td>Médio risco<br><strong>(Código amarelo)</strong></td>
+                  <td>Abrir suspeita de sepse</td>
+                  <td>1/1h</td>
+                </tr>
+                <tr class="yellow">
+                  <td>≥ 7</td>
+                  <td>Alto risco<br><strong>(Código amarelo)</strong></td>
+                  <td>Abrir suspeita de sepse</td>
+                  <td>Monitorização contínua</td>
+                </tr>
+                <tr class="blue">
+                  <td>-</td>
+                  <td>PCR<br><strong>(Código azul)</strong></td>
+                  <td>RCP conforme ACLS</td>
+                  <td>Monitorização contínua</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:18px;">
+      <div class="card-header">
+        <div>
+          <h3>Últimos registros desta estação</h3>
+          <p>Persistência local temporária para teste do front-end. A integração com Google Planilhas entra na próxima etapa.</p>
+        </div>
+        <span class="tag" id="historyCount">0 registros</span>
+      </div>
+      <div class="card-body" id="historyBox">
+        <p class="history-empty">Nenhum registro salvo localmente nesta sessão/navegador.</p>
+        <div class="storage-warning">Ambiente de prototipação: o armazenamento local não deve ser usado em produção com dados reais de pacientes.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const TZ_BRASILIA = "America/Sao_Paulo";
+    const STORAGE_KEY = "hdt_news2_triage_records_v2";
+
+    // Próxima etapa: publicar um Apps Script como Web App e colar a URL abaixo.
+    // Exemplo: const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/XXXX/exec";
+    const GOOGLE_SCRIPT_URL = "";
+
+    const form = document.getElementById("news2Form");
+    const patientName = document.getElementById("patientName");
+    const motherName = document.getElementById("motherName");
+    const birthDate = document.getElementById("birthDate");
+    const ageBox = document.getElementById("ageBox");
+    const clearBtn = document.getElementById("clearBtn");
+    const feedback = document.getElementById("feedback");
+    const clockBrasilia = document.getElementById("clockBrasilia");
+    const historyBox = document.getElementById("historyBox");
+    const historyCount = document.getElementById("historyCount");
+    const spo2Normal = document.getElementById("spo2Normal");
+    const spo2Co2 = document.getElementById("spo2Co2");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateClock();
+      setInterval(updateClock, 1000);
+      updateSpo2Fields();
+      renderHistory();
+      patientName.focus();
+    });
+
+    [patientName, motherName].forEach(input => {
+      input.addEventListener("blur", event => {
+        event.target.value = normalizeText(event.target.value);
+      });
+      input.addEventListener("input", () => clearFieldError(input.id));
+    });
+
+    birthDate.addEventListener("keydown", blockNonDigits);
+    birthDate.addEventListener("input", () => {
+      birthDate.value = maskDate(onlyDigits(birthDate.value).slice(0, 8));
+      clearFieldError("birthDate");
+      const parsed = parseDatePtBr(birthDate.value);
+      ageBox.textContent = parsed.valid ? calculateAge(parsed.date).label : "Informe a data de nascimento";
+    });
+
+    birthDate.addEventListener("paste", event => {
+      event.preventDefault();
+      const text = (event.clipboardData || window.clipboardData).getData("text");
+      birthDate.value = maskDate(onlyDigits(text).slice(0, 8));
+      birthDate.dispatchEvent(new Event("input"));
+    });
+
+    document.querySelectorAll("[data-blue-when-sim]").forEach(select => {
+      select.addEventListener("change", () => {
+        clearFieldError(select.id);
+        updateClinicalAttention(select);
+      });
+    });
+
+    document.querySelectorAll("input[name='spo2Scale']").forEach(radio => {
+      radio.addEventListener("change", updateSpo2Fields);
+    });
+
+    ["sbp", "respRate", "heartRate", "spo2Normal", "spo2Co2"].forEach(id => {
+      const element = document.getElementById(id);
+      element.addEventListener("keydown", blockNonDigits);
+      element.addEventListener("input", event => {
+        event.target.value = onlyDigits(event.target.value);
+        clearFieldError(id);
+      });
+      element.addEventListener("paste", event => {
+        event.preventDefault();
+        const text = (event.clipboardData || window.clipboardData).getData("text");
+        element.value = onlyDigits(text);
+        clearFieldError(id);
+      });
+    });
+
+    ["oxygenSupport", "consciousness"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => clearFieldError(id));
+    });
+
+    document.getElementById("temperature").addEventListener("input", event => {
+      event.target.value = event.target.value.replace(/[^0-9,.]/g, "");
+      clearFieldError("temperature");
+    });
+
+    clearBtn.addEventListener("click", resetScreen);
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      hideFeedback();
+      clearAllErrors();
+      refreshAllClinicalAttention();
+
+      const validation = validateForm();
+      if (!validation.ok) {
+        showFeedback("Revise os campos destacados antes de salvar.", "error");
+        focusFirstInvalidField();
+        return;
+      }
+
+      try {
+        await saveRecord(validation.payload);
+        resetScreen({ keepFeedback: true });
+        showFeedback("Registro salvo com sucesso. Tela limpa para o próximo atendimento.", "ok");
+      } catch (error) {
+        console.error(error);
+        showFeedback("Não foi possível salvar o registro. Verifique a conexão ou o endpoint configurado.", "error");
+      }
+    });
+
+    function normalizeText(value) {
+      return String(value || "")
+        .normalize("NFC")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toUpperCase();
+    }
+
+    function onlyDigits(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
+
+    function maskDate(digits) {
+      if (digits.length <= 2) return digits;
+      if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+      return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+    }
+
+    function blockNonDigits(event) {
+      const allowedControlKeys = [
+        "Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
+        "Home", "End", "Enter"
+      ];
+      if (allowedControlKeys.includes(event.key) || event.ctrlKey || event.metaKey) return;
+      if (!/^\d$/.test(event.key)) event.preventDefault();
+    }
+
+    function parseDatePtBr(value) {
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value || "");
+      if (!match) return { valid: false, message: "Informe a data no formato dd/mm/aaaa." };
+
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+      const date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+
+      const exists = date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day;
+
+      if (!exists) return { valid: false, message: "A data informada não existe no calendário." };
+
+      const today = getBrasiliaDateOnly();
+      if (date > today) return { valid: false, message: "A data de nascimento não pode ser futura." };
+      if (year < 1900) return { valid: false, message: "Revise o ano de nascimento informado." };
+
+      return { valid: true, date };
+    }
+
+    function getBrasiliaDateOnly() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ_BRASILIA,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+      const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return new Date(Date.UTC(Number(map.year), Number(map.month) - 1, Number(map.day), 12, 0, 0));
+    }
+
+    function getBrasiliaTimestamp() {
+      const parts = new Intl.DateTimeFormat("pt-BR", {
+        timeZone: TZ_BRASILIA,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).formatToParts(new Date());
+      const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return `${map.day}/${map.month}/${map.year} ${map.hour}:${map.minute}:${map.second}`;
+    }
+
+    function calculateAge(birth) {
+      const today = getBrasiliaDateOnly();
+      let years = today.getUTCFullYear() - birth.getUTCFullYear();
+      let months = today.getUTCMonth() - birth.getUTCMonth();
+      let days = today.getUTCDate() - birth.getUTCDate();
+
+      if (days < 0) {
+        months -= 1;
+        const previousMonth = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 0));
+        days += previousMonth.getUTCDate();
+      }
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      let label;
+      if (years >= 2) label = `${years} anos`;
+      else if (years === 1) label = months === 1 ? "1 ano e 1 mês" : `1 ano e ${months} meses`;
+      else if (months >= 1) label = `${months} ${months === 1 ? "mês" : "meses"} e ${days} ${days === 1 ? "dia" : "dias"}`;
+      else label = `${days} ${days === 1 ? "dia" : "dias"}`;
+
+      return { years, months, days, label };
+    }
+
+    function updateClock() {
+      clockBrasilia.textContent = `Horário de Brasília: ${new Intl.DateTimeFormat("pt-BR", {
+        timeZone: TZ_BRASILIA,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(new Date())}`;
+    }
+
+    function updateSpo2Fields() {
+      const scale = getCheckedValue("spo2Scale");
+      if (scale === "SADIO") {
+        spo2Normal.disabled = false;
+        spo2Normal.closest(".field").querySelector("label").classList.add("required");
+        spo2Co2.disabled = true;
+        spo2Co2.value = "";
+        spo2Co2.closest(".field").querySelector("label").classList.remove("required");
+        clearFieldError("spo2Co2");
+      } else {
+        spo2Normal.disabled = true;
+        spo2Normal.value = "";
+        spo2Normal.closest(".field").querySelector("label").classList.remove("required");
+        clearFieldError("spo2Normal");
+        spo2Co2.disabled = false;
+        spo2Co2.closest(".field").querySelector("label").classList.add("required");
+      }
+    }
+
+    function getCheckedValue(name) {
+      const checked = document.querySelector(`input[name='${name}']:checked`);
+      return checked ? checked.value : "";
+    }
+
+    function updateClinicalAttention(select) {
+      const field = select.closest(".field");
+      if (!field) return;
+      field.classList.toggle("clinical-attention", select.value === "SIM");
+    }
+
+    function refreshAllClinicalAttention() {
+      document.querySelectorAll("[data-blue-when-sim]").forEach(updateClinicalAttention);
+    }
+
+    function validateForm() {
+      const parsedBirthDate = parseDatePtBr(birthDate.value);
+      const normalizedPatient = normalizeText(patientName.value);
+      const normalizedMother = normalizeText(motherName.value);
+      patientName.value = normalizedPatient;
+      motherName.value = normalizedMother;
+
+      let ok = true;
+
+      if (!normalizedPatient) ok = setFieldError("patientName", "O nome do paciente é obrigatório.");
+      if (!normalizedMother) ok = setFieldError("motherName", "O nome da mãe é obrigatório.");
+      if (!parsedBirthDate.valid) ok = setFieldError("birthDate", parsedBirthDate.message);
+
+      const requiredSelects = [
+        ["dyspnea", "Informe se há dispneia."],
+        ["brokenSpeech", "Informe se há frases entrecortadas."],
+        ["respEffort", "Informe se há sinais de esforço respiratório."],
+        ["oxygenSupport", "Informe o suporte de O₂."],
+        ["consciousness", "Informe o nível de consciência."]
+      ];
+      requiredSelects.forEach(([id, message]) => {
+        if (!document.getElementById(id).value) ok = setFieldError(id, message);
+      });
+
+      const sbp = validateNumber("sbp", 50, 260, "PAS deve estar entre 50 e 260 mmHg.");
+      const respRate = validateNumber("respRate", 4, 80, "FR deve estar entre 4 e 80 irpm.");
+      const heartRate = validateNumber("heartRate", 20, 240, "FC deve estar entre 20 e 240 bpm.");
+      const temperature = validateDecimal("temperature", 30, 45, "Temperatura deve estar entre 30,0°C e 45,0°C.");
+
+      if (!sbp.valid) ok = false;
+      if (!respRate.valid) ok = false;
+      if (!heartRate.valid) ok = false;
+      if (!temperature.valid) ok = false;
+
+      const scale = getCheckedValue("spo2Scale");
+      const spo2Field = scale === "SADIO" ? "spo2Normal" : "spo2Co2";
+      const spo2Message = scale === "SADIO"
+        ? "Sat O₂ (Sadio) deve estar entre 50% e 100%."
+        : "Sat O₂ (Retentor CO₂) deve estar entre 50% e 100%.";
+      const spo2 = validateNumber(spo2Field, 50, 100, spo2Message);
+      if (!spo2.valid) ok = false;
+
+      if (!ok) return { ok: false };
+
+      const age = calculateAge(parsedBirthDate.date);
+
+      const payload = {
+        recorded_at_brasilia: getBrasiliaTimestamp(),
+        patient_name: normalizedPatient,
+        mother_name: normalizedMother,
+        birth_date: birthDate.value,
+        age_label: age.label,
+        age_years: age.years,
+        dyspnea: document.getElementById("dyspnea").value,
+        broken_speech: document.getElementById("brokenSpeech").value,
+        respiratory_effort: document.getElementById("respEffort").value,
+        sbp_mmHg: sbp.value,
+        resp_rate_irpm: respRate.value,
+        heart_rate_bpm: heartRate.value,
+        spo2_scale: scale,
+        spo2_percent: spo2.value,
+        oxygen_support: document.getElementById("oxygenSupport").value,
+        consciousness: document.getElementById("consciousness").value,
+        temperature_celsius: temperature.value,
+        news2_score: null,
+        news2_classification: "CALCULO_PENDENTE"
+      };
+
+      return { ok: true, payload };
+    }
+
+    function validateNumber(id, min, max, message) {
+      const element = document.getElementById(id);
+      const raw = onlyDigits(element.value);
+      const value = Number(raw);
+      element.value = raw;
+      if (raw === "" || Number.isNaN(value) || value < min || value > max) {
+        setFieldError(id, message);
+        return { valid: false, value: null };
+      }
+      return { valid: true, value };
+    }
+
+    function validateDecimal(id, min, max, message) {
+      const element = document.getElementById(id);
+      const normalized = element.value.replace(",", ".");
+      const value = Number(normalized);
+      if (element.value === "" || Number.isNaN(value) || value < min || value > max) {
+        setFieldError(id, message);
+        return { valid: false, value: null };
+      }
+      element.value = value.toFixed(1).replace(".", ",");
+      return { valid: true, value };
+    }
+
+    function setFieldError(fieldName, message) {
+      const field = document.querySelector(`[data-field='${fieldName}']`);
+      if (!field) return false;
+      field.classList.add("invalid");
+      const error = field.querySelector(".error-message");
+      if (error) error.textContent = message;
+      return false;
+    }
+
+    function clearFieldError(fieldName) {
+      const field = document.querySelector(`[data-field='${fieldName}']`);
+      if (!field) return;
+      field.classList.remove("invalid");
+      const error = field.querySelector(".error-message");
+      if (error) error.textContent = "";
+    }
+
+    function clearAllErrors() {
+      document.querySelectorAll(".field.invalid").forEach(field => {
+        field.classList.remove("invalid");
+        const error = field.querySelector(".error-message");
+        if (error) error.textContent = "";
+      });
+    }
+
+    function focusFirstInvalidField() {
+      const firstInvalid = document.querySelector(".field.invalid input:not([disabled]), .field.invalid select:not([disabled]), .field.invalid textarea:not([disabled])");
+      if (firstInvalid) firstInvalid.focus();
+    }
+
+    async function saveRecord(payload) {
+      if (GOOGLE_SCRIPT_URL) {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+      }
+
+      const records = getLocalRecords();
+      records.unshift(payload);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records.slice(0, 25)));
+      renderHistory();
+    }
+
+    function getLocalRecords() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+      catch { return []; }
+    }
+
+    function renderHistory() {
+      const records = getLocalRecords();
+      historyCount.textContent = `${records.length} registro${records.length === 1 ? "" : "s"}`;
+
+      if (!records.length) {
+        historyBox.innerHTML = `
+          <p class="history-empty">Nenhum registro salvo localmente nesta sessão/navegador.</p>
+          <div class="storage-warning">Ambiente de prototipação: o armazenamento local não deve ser usado em produção com dados reais de pacientes.</div>
+        `;
+        return;
+      }
+
+      const rows = records.slice(0, 8).map(record => `
+        <tr>
+          <td>${escapeHtml(record.recorded_at_brasilia)}</td>
+          <td><strong>${escapeHtml(record.patient_name)}</strong><br><span class="hint">Mãe: ${escapeHtml(record.mother_name)}</span></td>
+          <td>${escapeHtml(record.birth_date)}<br><span class="hint">${escapeHtml(record.age_label)}</span></td>
+          <td>PAS ${record.sbp_mmHg} · FR ${record.resp_rate_irpm} · FC ${record.heart_rate_bpm}<br><span class="hint">Sat ${record.spo2_percent}% (${escapeHtml(record.spo2_scale)}) · Temp ${String(record.temperature_celsius).replace('.', ',')}°C</span></td>
+          <td>${escapeHtml(record.news2_classification)}</td>
+        </tr>
+      `).join("");
+
+      historyBox.innerHTML = `
+        <div style="overflow:auto;">
+          <table class="history" aria-label="Histórico local de registros">
+            <thead>
+              <tr>
+                <th>Registro</th>
+                <th>Paciente / Mãe</th>
+                <th>Nascimento / Idade</th>
+                <th>Sinais vitais</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div class="storage-warning">Ambiente de prototipação: o armazenamento local não deve ser usado em produção com dados reais de pacientes.</div>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showFeedback(message, type = "ok") {
+      feedback.className = `feedback show ${type}`;
+      feedback.textContent = message;
+    }
+
+    function hideFeedback() {
+      feedback.className = "feedback";
+      feedback.textContent = "";
+    }
+
+    function resetScreen(options = {}) {
+      form.reset();
+      clearAllErrors();
+      document.querySelectorAll(".clinical-attention").forEach(field => field.classList.remove("clinical-attention"));
+      ageBox.textContent = "Informe a data de nascimento";
+      updateSpo2Fields();
+      if (!options.keepFeedback) hideFeedback();
+      patientName.focus();
+    }
+  </script>
+</body>
+</html>
